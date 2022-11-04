@@ -1,65 +1,100 @@
-let palabra='';
+let palabrita;
+let cant_errores = 0; //cuantas veces me equivoqué
+let cant_aciertos = 0; //cuantas letras acerté
 
-// array de palabras 
+const palabras = [
+    'manzanas',     /* 0 */
+    'Camiseta',     /* 1 */
+    'caramelos',    /* 2 */
+    'ñoquis',       /* 3 */
+    'streamer',     /* 4 */
+    'twitch',       /* 5 */
+    'murciegalo',   /* 6 */
+    'microfono'     /* 7 */
+];
+const btn = id('jugar');
+const imagen = id( 'imagen' );
+const btn_letras = document.querySelectorAll( "#letras button" );
 
-const palabras = ["barcelona","santiago","washington","valdivia","cordova","tokio","guanajuato"];
-
-const btn = id(`jugar`);//aqui llamamos al la fuction id que ejecuta el getelementbyid
-btn.addEventListener(`click`, iniciar)
-
-function id (string) {
-    return document.getElementById(string);
-}
-
-function obtenerRandom(numMin, numMax){
-    const amplitudValores = numMax-numMin;
-    const valorAlAzar = Math.floor( Math.random()* amplitudValores) + numMin;
-    return valorAlAzar
-}
+/* click en iniciar juego */
+btn.addEventListener('click', iniciar );
 
 function iniciar(event){
-    btn.disabled = true//para desabilitar el btn cuando lo inicie y le aparexca la palabra secreta
+    imagen.src = 'img/horca.png';
+    btn.disabled = true;
+    cant_errores = 0;
+    cant_aciertos = 0; 
 
-    const parrafo = id ('palabra_a_adivinar');
-    parrafo.innerHTML = ''
+    const parrafo = id( 'palabra_a_adivinar' );
+    parrafo.innerHTML = ''; 
 
-    const cantPalabras= palabras.length;
+    const cant_palabras = palabras.length;
+    const valor_al_azar = obtener_random( 0, cant_palabras );
 
-    const valorAlAzar = obtenerRandom(0,cantPalabras);
+    palabrita = palabras[ valor_al_azar ];
+    console.log( palabrita );
+    const cant_letras = palabrita.length;
 
-    palabra = palabras[ valorAlAzar];
-    console.log(palabra)
+    for( let i = 0; i < btn_letras.length ; i++ ){
+        btn_letras[ i ].disabled = false;
+    }
 
-    const cantLetras = palabra.length;
-
-    for(let i = 0; i < cantLetras; i++){
-        const span = document.createElement('span');
+    for( let i = 0; i < cant_letras; i++ ){
+        const span = document.createElement( 'span' );
         parrafo.appendChild( span );
     }
 
-    
 }
 
-const btnLetras = document.querySelectorAll('#letras button');
-for ( i = 0 ; i < btnLetras.length ; i++){
-    btnLetras[ i ].addEventListener('click' , clickLetras);
+/* click de adivinar letra */
+for( let i = 0; i < btn_letras.length ; i++ ){
+    btn_letras[ i ].addEventListener( 'click', click_letras );
 }
 
-function clickLetras(event){
-    const spans = document.querySelectorAll('#palabra_a_adivinar span')
-    const button = event.target;//cual de letras llamo a la funcion
+function click_letras(event){
+    const spans = document.querySelectorAll( '#palabra_a_adivinar span' );
+    const button = event.target; //cuál de todas las letras, llamó a la función.
     button.disabled = true;
-    const letra = button.innerHTML.toUpperCase();
-    const palabrita = palabra.toUpperCase();
+
+    const letra = button.innerHTML.toLowerCase( );
+    const palabra = palabrita.toLowerCase( ); // .toUpperCase( )
 
     let acerto = false;
-    for ( i = 0; i < palabrita.length ; i++){
-        if (letra == palabrita[i]){
-            //la variable i es la posicion de la letra en la palbra. que coincide con el span al que teneos que mostrarle esta letra...
-            spans [i].innerHTML=letra;
+    for( let i = 0; i < palabra.length;  i++ ){
+        if( letra == palabra[i] ){
+            //la variable i es la posición de la letra en la palabra.
+            //que coincide con el span al que tenemos que mostarle esta letra...
+            spans[i].innerHTML = letra;
+            cant_aciertos++;
             acerto = true;
         }
     }
-    console.log( "la letra " + letra + " en la palabra  " + palabra + " ¿existe? " + acerto );
+
+    if( acerto == false ){
+        cant_errores++;
+        const source = `img/horca${cant_errores}.png` ;
+        imagen.src = source;
+    }
+
+    if( cant_errores == 5 ){
+        id('resultado').innerHTML ="Perdiste, la palabra era " + palabrita;
+        game_over( );
+    }else if( cant_aciertos == palabrita.length ){
+        id('resultado').innerHTML = "GANASTE!! WIIIIII";
+        game_over( );
+    }
+    console.log( "la letra " + letra + " en la palabra " + palabra + " ¿existe?: " + acerto );
 }
 
+
+/* fin del juego */
+function game_over( ){
+    for( let i = 0; i < btn_letras.length ; i++ ){
+        btn_letras[ i ].disabled = true;
+    }
+
+    btn.disabled = false;
+}
+
+
+game_over( );
