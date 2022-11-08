@@ -80,10 +80,9 @@ function click_letras(event){
         id('resultado').innerHTML ="Perdiste, la palabra era " + palabrita;
         game_over( );
     }else if( cant_aciertos == palabrita.length ){
-        id('resultado').innerHTML = "GANASTE!! WIIIIII";
+        id('resultado').innerHTML = "GANASTE!!";
         game_over( );
     }
-    console.log( "la letra " + letra + " en la palabra " + palabra + " ¿existe?: " + acerto );
 }
 
 
@@ -94,6 +93,14 @@ function game_over( ){
     }
 
     btn.disabled = false;
+}
+
+function agregarPalabra(){
+    let palabraAgregar = document.getElementById('text').value;
+
+    palabras.push(palabraAgregar);
+console.log(palabras)
+    formulario.reset();
 }
 
 
